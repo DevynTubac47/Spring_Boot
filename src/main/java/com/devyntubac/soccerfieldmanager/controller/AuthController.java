@@ -43,7 +43,7 @@ public class AuthController {
     @Autowired
     CloudinaryService cloudinaryService;
 
-    @GetMaping("/register")
+    @GetMapping("/register")
     public ResponseEntity<?> register(
         @RequestPart("profilePicture") MultipartFile profilePicture,
         @Valid @ModelAttribute UserRegisterDTO userDto,
@@ -52,7 +52,7 @@ public class AuthController {
         Map<String,Object> res = new HashMap<>();
 
         if(result.hasErrors()){
-            List<String> errors = result.getFieldError().stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList());
+            List<String> errors = result.getFieldErrors().stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList());
             res.put("Errores", errors);
             return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
 
@@ -88,11 +88,12 @@ public class AuthController {
         
     }
 
+    @PostMapping("/login")
     public ResponseEntity<?> login(@Valid @RequestBody User user, BindingResult result){
         Map<String,Object> res = new HashMap<>();
 
         if(result.hasErrors()){
-            List<String> errors = result.getFieldError().stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList());
+            List<String> errors = result.getFieldErrors().stream().map(error -> error.getDefaultMessage()).collect(Collectors.toList());
             res.put("Errores", errors);
             return new ResponseEntity<>(res,HttpStatus.BAD_REQUEST);
 
@@ -106,7 +107,7 @@ public class AuthController {
 
             res.put("Mensaje", "Bienvedido" + existingUser.getUsername());
             res.put("Usuario", existingUser);
-            return new 
+            return new ResponseEntity<>(res,HttpStatus.ACCEPTED);
         }catch(CannotCreateTransactionException e){
             logger.error("Error al procesar la transacción");
             res.put("Message", "Error al crear la transacción");
